@@ -1,0 +1,12 @@
+[package]
+name = "kgen"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0.95"
+askama = "0.12.1"
+clap = { version = "4.5.28", features = ["derive"] }
+console = "0.15.10"
+dialoguer = "0.11.0"
+indicatif = "0.17.11"
