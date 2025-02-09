@@ -19,6 +19,12 @@ struct Cli {
 }
 
 #[derive(Template)]
+#[template(path = "Main.kt", escape = "none")]
+struct MainTemplate<'a> {
+    package: &'a str,
+}
+
+#[derive(Template)]
 #[template(path = "pom.xml")]
 struct PomTemplate<'a> {
     group_id: &'a str,
@@ -29,6 +35,11 @@ struct PomTemplate<'a> {
 fn main() -> anyhow::Result<()> {
     let cli = Cli::parse();
     println!("{:#?}", cli);
+
+    let main = MainTemplate {
+        package: &cli.package,
+    };
+    println!("{}", main.render()?);
 
     let pom = PomTemplate {
         group_id: &cli.group_id,
