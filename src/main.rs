@@ -1,70 +1,12 @@
+mod cli;
+mod output;
+mod templates;
+
 use askama::Template;
 use clap::Parser;
-
-/// Generate Kotlin projects with standard setup
-#[derive(Parser, Debug)]
-#[command(version, about, long_about = None)]
-struct Cli {
-    /// Maven groupId to use for the project
-    #[arg(short, long)]
-    group_id: String,
-
-    /// Maven artifactId to use for the project
-    #[arg(short, long)]
-    artifact_id: String,
-
-    /// Base package to generate
-    #[arg(short, long)]
-    package: String,
-}
-
-#[derive(Template)]
-#[template(path = "Main.kt", escape = "none")]
-struct MainTemplate<'a> {
-    package: &'a str,
-}
-
-#[derive(Template)]
-#[template(path = "MainTest.kt", escape = "none")]
-struct MainTestTemplate<'a> {
-    package: &'a str,
-}
-
-#[derive(Template)]
-#[template(path = "pom.xml")]
-struct PomTemplate<'a> {
-    group_id: &'a str,
-    artifact_id: &'a str,
-    main_class: &'a str,
-}
-
-struct MarkdownSection {
-    name: String,
-    lang: String,
-    contents: String,
-}
-
-impl MarkdownSection {
-    fn new(name: impl Into<String>, lang: impl Into<String>, contents: impl Into<String>) -> Self {
-        Self {
-            name: name.into(),
-            lang: lang.into(),
-            contents: contents.into(),
-        }
-    }
-}
-
-fn print_markdown(sections: &[MarkdownSection]) {
-    println!("# Files");
-    for section in sections {
-        println!();
-        println!("## {}", section.name);
-        println!();
-        println!("```{}", section.lang);
-        println!("{}", section.contents);
-        println!("```");
-    }
-}
+use cli::Cli;
+use output::{FilePreview, GeneratedFile};
+use templates::{MainTemplate, MainTestTemplate, PomTemplate};
 
 fn main() -> anyhow::Result<()> {
     let cli = Cli::parse();
@@ -85,14 +27,13 @@ fn main() -> anyhow::Result<()> {
 
     let env_template = include_str!("../static/.env.template").trim_end();
 
-    let sections = vec![
-        MarkdownSection::new("Main.kt", "kotlin", main.render()?),
-        MarkdownSection::new("MainTest.kt", "kotlin", main_test.render()?),
-        MarkdownSection::new("pom.xml", "xml", pom.render()?),
-        MarkdownSection::new(".env.template", "properties", env_template),
-    ];
+    let preview = FilePreview::new()
+        .with_file(GeneratedFile::from_path("Main.kt", main.render()?))
+        .with_file(GeneratedFile::from_path("MainTest.kt", main_test.render()?))
+        .with_file(GeneratedFile::from_path("pom.xml", pom.render()?))
+        .with_file(GeneratedFile::from_path(".env.template", env_template));
 
-    print_markdown(&sections);
+    preview.display();
 
     Ok(())
 }
