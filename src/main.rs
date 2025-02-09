@@ -17,7 +17,7 @@ struct Cli {
     #[arg(short, long)]
     artifact_id: String,
 
-    /// Base package to use to generate
+    /// Base package to generate
     #[arg(short, long)]
     package: String,
 }
