@@ -37,5 +37,8 @@ fn main() -> anyhow::Result<()> {
     };
     println!("{}", pom.render()?);
 
+    let env_template = include_str!("../static/.env.template");
+    print!("{}", env_template);
+
     Ok(())
 }
