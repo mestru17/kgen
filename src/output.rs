@@ -36,18 +36,6 @@ pub struct GeneratedFile {
 }
 
 impl GeneratedFile {
-    pub fn new(
-        name: impl Into<String>,
-        file_type: impl Into<FileType>,
-        contents: impl Into<String>,
-    ) -> Self {
-        Self {
-            name: name.into(),
-            file_type: file_type.into(),
-            contents: contents.into(),
-        }
-    }
-
     pub fn from_path(name: impl Into<String>, contents: impl Into<String>) -> Self {
         let name = name.into();
         let extension = name.split(".").last().unwrap_or("").to_string();
