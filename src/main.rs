@@ -38,14 +38,40 @@ struct PomTemplate<'a> {
     main_class: &'a str,
 }
 
+struct MarkdownSection {
+    name: String,
+    lang: String,
+    contents: String,
+}
+
+impl MarkdownSection {
+    fn new(name: impl Into<String>, lang: impl Into<String>, contents: impl Into<String>) -> Self {
+        Self {
+            name: name.into(),
+            lang: lang.into(),
+            contents: contents.into(),
+        }
+    }
+}
+
+fn print_markdown(sections: &[MarkdownSection]) {
+    println!("# Files");
+    for section in sections {
+        println!();
+        println!("## {}", section.name);
+        println!();
+        println!("```{}", section.lang);
+        println!("{}", section.contents);
+        println!("```");
+    }
+}
+
 fn main() -> anyhow::Result<()> {
     let cli = Cli::parse();
-    println!("{:#?}", cli);
 
     let main = MainTemplate {
         package: &cli.package,
     };
-    println!("{}", main.render()?);
 
     let main_test = MainTestTemplate {
         package: &cli.package,
@@ -56,10 +82,17 @@ fn main() -> anyhow::Result<()> {
         artifact_id: &cli.artifact_id,
         main_class: &format!("{}.MainKt", cli.package),
     };
-    println!("{}", pom.render()?);
 
-    let env_template = include_str!("../static/.env.template");
-    print!("{}", env_template);
+    let env_template = include_str!("../static/.env.template").trim_end();
+
+    let sections = vec![
+        MarkdownSection::new("Main.kt", "kotlin", main.render()?),
+        MarkdownSection::new("MainTest.kt", "kotlin", main_test.render()?),
+        MarkdownSection::new("pom.xml", "xml", pom.render()?),
+        MarkdownSection::new(".env.template", "properties", env_template),
+    ];
+
+    print_markdown(&sections);
 
     Ok(())
 }
