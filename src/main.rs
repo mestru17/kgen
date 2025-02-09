@@ -5,10 +5,6 @@ use clap::Parser;
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
 struct Cli {
-    /// The name of the project
-    #[arg(short, long)]
-    name: String,
-
     /// Maven groupId to use for the project
     #[arg(short, long)]
     group_id: String,
