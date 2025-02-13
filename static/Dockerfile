@@ -1,5 +1,5 @@
 # Stage 1: Build Application
-from maven:3.8-amazoncorretto-11 AS build
+FROM maven:3.8-amazoncorretto-11 AS build
 
 ARG MAVEN_REPO_URL
 ARG MAVEN_REPO_USERNAME
