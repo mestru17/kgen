@@ -19,13 +19,13 @@ fn main() -> anyhow::Result<()> {
         package: &cli.package,
     };
 
+    let env_template = include_str!("../static/.env.template").trim_end();
+
     let pom = PomTemplate {
         group_id: &cli.group_id,
         artifact_id: &cli.artifact_id,
         main_class: &format!("{}.MainKt", cli.package),
     };
-
-    let env_template = include_str!("../static/.env.template").trim_end();
 
     let preview = FilePreview::new()
         .with_file(GeneratedFile::from_path("Main.kt", main.render()?))
