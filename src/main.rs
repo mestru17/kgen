@@ -28,10 +28,18 @@ fn main() -> anyhow::Result<()> {
     };
 
     let preview = FilePreview::new()
-        .with_file(GeneratedFile::from_path("Main.kt", main.render()?))
-        .with_file(GeneratedFile::from_path("MainTest.kt", main_test.render()?))
-        .with_file(GeneratedFile::from_path("pom.xml", pom.render()?))
-        .with_file(GeneratedFile::from_path(".env.template", env_template));
+        .with_file(GeneratedFile::new("Main.kt", "kotlin", main.render()?))
+        .with_file(GeneratedFile::new(
+            "MainTest.kt",
+            "kotlin",
+            main_test.render()?,
+        ))
+        .with_file(GeneratedFile::new(
+            ".env.template",
+            "properties",
+            env_template,
+        ))
+        .with_file(GeneratedFile::new("pom.xml", "xml", pom.render()?));
 
     preview.display();
 

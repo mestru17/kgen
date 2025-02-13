@@ -1,62 +1,23 @@
 use core::fmt;
 
 #[derive(Debug)]
-pub enum FileType {
-    Kotlin,
-    Xml,
-    Properties,
-    Other(String),
-}
-
-impl FileType {
-    pub fn as_str(&self) -> &str {
-        match self {
-            Self::Kotlin => "kotlin",
-            Self::Xml => "xml",
-            Self::Properties => "properties",
-            Self::Other(lang) => lang,
-        }
-    }
-
-    pub fn from_extension(ext: &str) -> Self {
-        match ext.to_lowercase().as_str() {
-            "kt" | "kts" => Self::Kotlin,
-            "xml" => Self::Xml,
-            "properties" | "env" => Self::Properties,
-            _ => Self::Other(ext.to_string()),
-        }
-    }
-}
-
-#[derive(Debug)]
 pub struct GeneratedFile {
     pub name: String,
-    pub file_type: FileType,
+    pub file_type: String,
     pub contents: String,
 }
 
 impl GeneratedFile {
-    pub fn from_path(name: impl Into<String>, contents: impl Into<String>) -> Self {
-        let name = name.into();
-        let extension = name.split(".").last().unwrap_or("").to_string();
-
+    pub fn new(
+        name: impl Into<String>,
+        file_type: impl Into<String>,
+        contents: impl Into<String>,
+    ) -> Self {
         Self {
-            name,
-            file_type: FileType::from_extension(&extension),
+            name: name.into(),
+            file_type: file_type.into(),
             contents: contents.into(),
         }
-    }
-}
-
-impl From<String> for FileType {
-    fn from(s: String) -> Self {
-        Self::Other(s)
-    }
-}
-
-impl From<&str> for FileType {
-    fn from(s: &str) -> Self {
-        Self::Other(s.to_string())
     }
 }
 
@@ -92,7 +53,7 @@ impl fmt::Display for FilePreview {
             writeln!(f)?;
             writeln!(f, "## {}", file.name)?;
             writeln!(f)?;
-            writeln!(f, "```{}", file.file_type.as_str())?;
+            writeln!(f, "```{}", file.file_type)?;
             writeln!(f, "{}", file.contents)?;
             writeln!(f, "```")?;
         }
