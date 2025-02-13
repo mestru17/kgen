@@ -23,6 +23,8 @@ fn main() -> anyhow::Result<()> {
 
     let git_ignore = include_str!("../static/.gitignore").trim_end();
 
+    let application_yml = include_str!("../static/application.yml").trim_end();
+
     let pom = PomTemplate {
         group_id: &cli.group_id,
         artifact_id: &cli.artifact_id,
@@ -42,6 +44,11 @@ fn main() -> anyhow::Result<()> {
             env_template,
         ))
         .with_file(GeneratedFile::new(".gitignore", "", git_ignore))
+        .with_file(GeneratedFile::new(
+            "application.yml",
+            "yaml",
+            application_yml,
+        ))
         .with_file(GeneratedFile::new("pom.xml", "xml", pom.render()?));
 
     preview.display();
