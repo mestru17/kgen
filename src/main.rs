@@ -6,7 +6,7 @@ use askama::Template;
 use clap::Parser;
 use cli::Cli;
 use output::{FilePreview, GeneratedFile};
-use templates::{MainTemplate, MainTestTemplate, PomTemplate};
+use templates::{MainTemplate, MainTestTemplate, PomTemplate, ReadmeTemplate};
 
 fn main() -> anyhow::Result<()> {
     let cli = Cli::parse();
@@ -35,6 +35,10 @@ fn main() -> anyhow::Result<()> {
         main_class: &format!("{}.MainKt", cli.package),
     };
 
+    let readme = ReadmeTemplate {
+        title: &cli.artifact_id,
+    };
+
     let preview = FilePreview::new()
         .with_file(GeneratedFile::new("Main.kt", "kotlin", main.render()?))
         .with_file(GeneratedFile::new(
@@ -59,7 +63,12 @@ fn main() -> anyhow::Result<()> {
             docker_compose,
         ))
         .with_file(GeneratedFile::new("Dockerfile", "dockerfile", dockerfile))
-        .with_file(GeneratedFile::new("pom.xml", "xml", pom.render()?));
+        .with_file(GeneratedFile::new("pom.xml", "xml", pom.render()?))
+        .with_file(GeneratedFile::new(
+            "README.md",
+            "markdown",
+            readme.render()?,
+        ));
 
     preview.display();
 

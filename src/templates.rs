@@ -19,3 +19,9 @@ pub struct PomTemplate<'a> {
     pub artifact_id: &'a str,
     pub main_class: &'a str,
 }
+
+#[derive(Template)]
+#[template(path = "README.md")]
+pub struct ReadmeTemplate<'a> {
+    pub title: &'a str,
+}
