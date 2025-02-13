@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xsi:schemaLocation="https://maven.apache.org/SETTINGS/1.1.0 https://maven.apache.org/xsd/settings-1.1.0.xsd"
+          xmlns="https://maven.apache.org/SETTINGS/1.1.0" xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance">
+    <mirrors>
+        <mirror>
+            <id>main</id>
+            <mirrorOf>external:*</mirrorOf>
+            <name>Main</name>
+            <url>${env.MAVEN_REPO_URL}</url>
+        </mirror>
+    </mirrors>
+    <servers>
+        <server>
+            <id>main</id>
+            <username>${env.MAVEN_REPO_USERNAME}</username>
+            <password>${env.MAVEN_REPO_PASSWORD}</password>
+        </server>
+        <server>
+            <id>snapshots</id>
+            <username>${env.MAVEN_REPO_USERNAME}</username>
+            <password>${env.MAVEN_REPO_PASSWORD}</password>
+        </server>
+        <server>
+            <id>releases</id>
+            <username>${env.MAVEN_REPO_USERNAME}</username>
+            <password>${env.MAVEN_REPO_PASSWORD}</password>
+        </server>
+    </servers>
+    <profiles>
+        <profile>
+            <id>default</id>
+            <repositories>
+                <repository>
+                    <id>central</id>
+                    <name>central</name>
+                    <url>${env.MAVEN_REPO_URL}</url>
+                </repository>
+            </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>central</id>
+                    <name>central</name>
+                    <url>${env.MAVEN_REPO_URL}</url>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
+        <activeProfiles>
+            <activeProfile>default</activeProfile>
+        </activeProfiles>
+    </profiles>
+</settings

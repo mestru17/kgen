@@ -39,6 +39,8 @@ fn main() -> anyhow::Result<()> {
         title: &cli.artifact_id,
     };
 
+    let settings_xml_template = include_str!("../static/settings.xml.template").trim_end();
+
     let preview = FilePreview::new()
         .with_file(GeneratedFile::new("Main.kt", "kotlin", main.render()?))
         .with_file(GeneratedFile::new(
@@ -68,6 +70,11 @@ fn main() -> anyhow::Result<()> {
             "README.md",
             "markdown",
             readme.render()?,
+        ))
+        .with_file(GeneratedFile::new(
+            "settings.xml.template",
+            "xml",
+            settings_xml_template,
         ));
 
     preview.display();
