@@ -27,6 +27,8 @@ fn main() -> anyhow::Result<()> {
 
     let docker_compose = include_str!("../static/docker-compose.yml").trim_end();
 
+    let dockerfile = include_str!("../static/Dockerfile").trim_end();
+
     let pom = PomTemplate {
         group_id: &cli.group_id,
         artifact_id: &cli.artifact_id,
@@ -56,6 +58,7 @@ fn main() -> anyhow::Result<()> {
             "yaml",
             docker_compose,
         ))
+        .with_file(GeneratedFile::new("Dockerfile", "dockerfile", dockerfile))
         .with_file(GeneratedFile::new("pom.xml", "xml", pom.render()?));
 
     preview.display();
