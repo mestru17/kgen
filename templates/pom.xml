@@ -34,18 +34,16 @@
         <!-- Docs -->
         <dokka.version>2.0.0</dokka.version>
     </properties>
-
+    {% if repositories.len() != 0 %}
     <repositories>
+        {%- for repo in repositories %}
         <repository>
-            <id>releases</id>
-            <url>***REMOVED***</url>
+            <id>{{ repo.id }}</id>
+            <url>{{ repo.url }}</url>
         </repository>
-        <repository>
-            <id>snapshots</id>
-            <url>***REMOVED***</url>
-        </repository>
+        {%- endfor %}
     </repositories>
-
+    {% endif %}
     <build>
         <sourceDirectory>src/main/kotlin</sourceDirectory>
         <testSourceDirectory>src/test/kotlin</testSourceDirectory>

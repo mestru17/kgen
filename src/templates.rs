@@ -1,5 +1,7 @@
 use askama::Template;
 
+use crate::config::Repository;
+
 #[derive(Template)]
 #[template(path = "Main.kt", escape = "none")]
 pub struct MainTemplate<'a> {
@@ -18,6 +20,7 @@ pub struct PomTemplate<'a> {
     pub group_id: &'a str,
     pub artifact_id: &'a str,
     pub main_class: &'a str,
+    pub repositories: &'a [Repository],
 }
 
 #[derive(Template)]

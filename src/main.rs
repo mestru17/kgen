@@ -1,4 +1,5 @@
 mod cli;
+mod config;
 mod generate;
 mod templates;
 
@@ -6,11 +7,16 @@ use anyhow::Context;
 use askama::Template;
 use clap::Parser;
 use cli::Cli;
+use config::Config;
 use generate::{GeneratedDir, GeneratedFile, GeneratedProject};
 use templates::{MainTemplate, MainTestTemplate, PomTemplate, ReadmeTemplate};
 
+const NAME: &str = env!("CARGO_PKG_NAME");
+
 fn main() -> anyhow::Result<()> {
     let cli = Cli::parse();
+
+    let config: Config = confy::load(NAME, Some("config")).context("Failed to load config")?;
 
     let main = MainTemplate {
         package: &cli.package,
@@ -34,6 +40,7 @@ fn main() -> anyhow::Result<()> {
         group_id: &cli.group_id,
         artifact_id: &cli.artifact_id,
         main_class: &format!("{}.MainKt", cli.package),
+        repositories: &config.repositories,
     };
 
     let readme = ReadmeTemplate {
