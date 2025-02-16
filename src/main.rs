@@ -1,11 +1,12 @@
 mod cli;
-mod output;
+mod generate;
 mod templates;
 
+use anyhow::Context;
 use askama::Template;
 use clap::Parser;
 use cli::Cli;
-use output::{FilePreview, GeneratedFile};
+use generate::{GeneratedDir, GeneratedFile, GeneratedProject};
 use templates::{MainTemplate, MainTestTemplate, PomTemplate, ReadmeTemplate};
 
 fn main() -> anyhow::Result<()> {
@@ -41,43 +42,30 @@ fn main() -> anyhow::Result<()> {
 
     let settings_xml_template = include_str!("../static/settings.xml.template").trim_end();
 
-    let preview = FilePreview::new()
-        .with_file(GeneratedFile::new("Main.kt", "kotlin", main.render()?))
-        .with_file(GeneratedFile::new(
-            "MainTest.kt",
-            "kotlin",
+    GeneratedProject::new(GeneratedDir::new(&cli.artifact_id))
+        .dir(GeneratedDir::new("src/main/kotlin"))
+        .dir(GeneratedDir::new("src/test/kotlin"))
+        .file(GeneratedFile::new(
+            "src/main/kotlin/Main.kt",
+            main.render()?,
+        ))
+        .file(GeneratedFile::new(
+            "src/test/kotlin/MainTest.kt",
             main_test.render()?,
         ))
-        .with_file(GeneratedFile::new(
-            ".env.template",
-            "properties",
-            env_template,
-        ))
-        .with_file(GeneratedFile::new(".gitignore", "", git_ignore))
-        .with_file(GeneratedFile::new(
-            "application.yml",
-            "yaml",
-            application_yml,
-        ))
-        .with_file(GeneratedFile::new(
-            "docker-compose.yml",
-            "yaml",
-            docker_compose,
-        ))
-        .with_file(GeneratedFile::new("Dockerfile", "dockerfile", dockerfile))
-        .with_file(GeneratedFile::new("pom.xml", "xml", pom.render()?))
-        .with_file(GeneratedFile::new(
-            "README.md",
-            "markdown",
-            readme.render()?,
-        ))
-        .with_file(GeneratedFile::new(
+        .file(GeneratedFile::new(".env.template", env_template))
+        .file(GeneratedFile::new(".gitignore", git_ignore))
+        .file(GeneratedFile::new("application.yml", application_yml))
+        .file(GeneratedFile::new("docker-compose.yml", docker_compose))
+        .file(GeneratedFile::new("Dockerfile", dockerfile))
+        .file(GeneratedFile::new("pom.xml", pom.render()?))
+        .file(GeneratedFile::new("README.md", readme.render()?))
+        .file(GeneratedFile::new(
             "settings.xml.template",
-            "xml",
             settings_xml_template,
-        ));
-
-    preview.display();
+        ))
+        .generate()
+        .with_context(|| format!("Failed to generate project {}", cli.artifact_id))?;
 
     Ok(())
 }
