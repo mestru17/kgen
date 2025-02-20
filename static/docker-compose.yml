@@ -6,5 +6,5 @@ services:
         - MAVEN_REPO_URL=${MAVEN_REPO_URL}
         - MAVEN_REPO_USERNAME=${MAVEN_REPO_USERNAME}
         - MAVEN_REPO_PASSWORD=${MAVEN_REPO_PASSWORD}
-      volumes:
-        ./application.yml:/app/application.yml
+    volumes:
+      ./application.yml:/app/application.yml
