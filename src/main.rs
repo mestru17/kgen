@@ -15,16 +15,16 @@ use templates::{MainTemplate, MainTestTemplate, PomTemplate, ReadmeTemplate};
 const NAME: &str = env!("CARGO_PKG_NAME");
 
 fn main() -> anyhow::Result<()> {
-    let cli = Cli::parse();
+    let project_settings = Cli::parse().prompt_for_missing_values()?;
 
     let config: Config = confy::load(NAME, Some("config")).context("Failed to load config")?;
 
     let main = MainTemplate {
-        package: &cli.package,
+        package: &project_settings.package,
     };
 
     let main_test = MainTestTemplate {
-        package: &cli.package,
+        package: &project_settings.package,
     };
 
     let env_template = include_str!("../static/.env.template").trim_end();
@@ -38,19 +38,19 @@ fn main() -> anyhow::Result<()> {
     let dockerfile = include_str!("../static/Dockerfile").trim_end();
 
     let pom = PomTemplate {
-        group_id: &cli.group_id,
-        artifact_id: &cli.artifact_id,
-        main_class: &format!("{}.MainKt", cli.package),
+        group_id: &project_settings.group_id,
+        artifact_id: &project_settings.artifact_id,
+        main_class: &format!("{}.MainKt", project_settings.package),
         repositories: &config.repositories,
     };
 
     let readme = ReadmeTemplate {
-        title: &cli.artifact_id,
+        title: &project_settings.artifact_id,
     };
 
     let settings_xml_template = include_str!("../static/settings.xml.template").trim_end();
 
-    GeneratedProject::new(GeneratedDir::new(&cli.artifact_id))
+    GeneratedProject::new(GeneratedDir::new(&project_settings.artifact_id))
         .dir(GeneratedDir::new("src/main/kotlin"))
         .dir(GeneratedDir::new("src/test/kotlin"))
         .file(GeneratedFile::new(
@@ -73,7 +73,12 @@ fn main() -> anyhow::Result<()> {
             settings_xml_template,
         ))
         .generate()
-        .with_context(|| format!("Failed to generate project {}", cli.artifact_id))?;
+        .with_context(|| {
+            format!(
+                "Failed to generate project {}",
+                project_settings.artifact_id
+            )
+        })?;
 
     eprintln!("{}", style("✔ Generated project").for_stderr().green());
 
