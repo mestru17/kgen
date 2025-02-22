@@ -51,8 +51,8 @@ fn main() -> anyhow::Result<()> {
     let settings_xml_template = include_str!("../static/settings.xml.template").trim_end();
 
     GeneratedProject::new(GeneratedDir::new(&project_settings.artifact_id))
-        .dir(GeneratedDir::new("src/main/kotlin"))
-        .dir(GeneratedDir::new("src/test/kotlin"))
+        .dir(GeneratedDir::new("src/main/resources"))
+        .dir(GeneratedDir::new("src/test/resources"))
         .file(GeneratedFile::new(
             "src/main/kotlin/Main.kt",
             main.render()?,
