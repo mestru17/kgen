@@ -8,6 +8,7 @@ use askama::Template;
 use clap::Parser;
 use cli::Cli;
 use config::Config;
+use console::style;
 use generate::{GeneratedDir, GeneratedFile, GeneratedProject};
 use templates::{MainTemplate, MainTestTemplate, PomTemplate, ReadmeTemplate};
 
@@ -73,6 +74,8 @@ fn main() -> anyhow::Result<()> {
         ))
         .generate()
         .with_context(|| format!("Failed to generate project {}", cli.artifact_id))?;
+
+    eprintln!("{}", style("✔ Generated project").for_stderr().green());
 
     Ok(())
 }
