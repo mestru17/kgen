@@ -3,6 +3,8 @@ mod config;
 mod generate;
 mod templates;
 
+use std::path::Path;
+
 use anyhow::Context;
 use askama::Template;
 use clap::Parser;
@@ -54,11 +56,15 @@ fn main() -> anyhow::Result<()> {
         .dir(GeneratedDir::new("src/main/resources"))
         .dir(GeneratedDir::new("src/test/resources"))
         .file(GeneratedFile::new(
-            "src/main/kotlin/Main.kt",
+            Path::new("src/main/kotlin")
+                .join(&project_settings.package.replace(".", "/"))
+                .join("Main.kt"),
             main.render()?,
         ))
         .file(GeneratedFile::new(
-            "src/test/kotlin/MainTest.kt",
+            Path::new("src/test/kotlin")
+                .join(&project_settings.package.replace(".", "/"))
+                .join("MainTest.kt"),
             main_test.render()?,
         ))
         .file(GeneratedFile::new(".env.template", env_template))
