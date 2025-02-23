@@ -34,18 +34,20 @@ impl GeneratedFile {
 }
 
 #[derive(Debug)]
-pub struct GeneratedDir(PathBuf);
+pub struct GeneratedDir {
+    path: PathBuf,
+}
 
 impl GeneratedDir {
     pub fn new(path: impl Into<PathBuf>) -> Self {
-        Self(path.into())
+        Self { path: path.into() }
     }
 
     pub fn generate(&self) -> anyhow::Result<()> {
-        fs::create_dir_all(&self.0).with_context(|| {
+        fs::create_dir_all(&self.path).with_context(|| {
             format!(
                 "Failed to create directory {:?} or one of its parent directories",
-                self.0
+                self.path
             )
         })?;
 
@@ -55,7 +57,7 @@ impl GeneratedDir {
 
 #[derive(Debug)]
 pub struct GeneratedProject {
-    path: GeneratedDir,
+    dir: GeneratedDir,
     dirs: Vec<GeneratedDir>,
     files: Vec<GeneratedFile>,
 }
@@ -63,39 +65,36 @@ pub struct GeneratedProject {
 impl GeneratedProject {
     pub fn new(path: GeneratedDir) -> Self {
         Self {
-            path,
+            dir: path,
             dirs: Vec::new(),
             files: Vec::new(),
         }
     }
 
     pub fn dir(&mut self, dir: GeneratedDir) -> &mut Self {
-        let dir = GeneratedDir::new(self.path.0.join(dir.0));
+        let dir = GeneratedDir::new(self.dir.path.join(dir.path));
         self.dirs.push(dir);
         self
     }
 
     pub fn file(&mut self, file: GeneratedFile) -> &mut Self {
-        let file = GeneratedFile::new(self.path.0.join(file.path), file.content);
+        let file = GeneratedFile::new(self.dir.path.join(file.path), file.content);
         self.files.push(file);
         self
     }
 
     pub fn generate(&self) -> anyhow::Result<()> {
-        if self.path.0.exists() {
-            bail!("Project {:?} already exists", self.path.0);
+        if self.dir.path.exists() {
+            bail!("Project {:?} already exists", self.dir.path);
         }
 
-        self.path
+        self.dir
             .generate()
-            .with_context(|| format!("Failed to generate project directory {:?}", self.path))?;
+            .with_context(|| format!("Failed to generate project directory {:?}", self.dir))?;
 
         for dir in &self.dirs {
             dir.generate().with_context(|| {
-                format!(
-                    "Failed to generate dir {:?} in project {:?}",
-                    dir, self.path
-                )
+                format!("Failed to generate dir {:?} in project {:?}", dir, self.dir)
             })?;
         }
 
@@ -103,7 +102,7 @@ impl GeneratedProject {
             file.generate().with_context(|| {
                 format!(
                     "Failed to generate file {:?} in project {:?}",
-                    file, self.path
+                    file, self.dir
                 )
             })?;
         }
