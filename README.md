@@ -56,7 +56,7 @@ kgen --group-id com.example --artifact-id myproject --package com.example.myproj
 
 ## Contributing
 
-At this time, I am not looking for contributions as the project is still in early development. Feel free to fork the repository and experiment on your own.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for information regarding contributions.
 
 ## License
 
