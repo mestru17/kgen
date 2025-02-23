@@ -1,5 +1,7 @@
 # kgen
 
+![Gif of using kgen interactively in a terminal.](demo.gif)
+
 Generate Kotlin projects with an opinionated standard setup.
 
 ## Features
