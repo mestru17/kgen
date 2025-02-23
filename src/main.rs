@@ -86,7 +86,13 @@ fn main() -> anyhow::Result<()> {
             )
         })?;
 
-    eprintln!("{}", style("✔ Generated project").for_stderr().green());
+    eprintln!(
+        "{} {} {} {}",
+        style("✔").for_stderr().green(),
+        style("Generated project").for_stderr().bold(),
+        style("·").for_stderr().black().bright(),
+        style(&project_settings.artifact_id).for_stderr().green()
+    );
 
     Ok(())
 }
