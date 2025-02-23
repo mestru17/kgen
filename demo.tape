@@ -19,15 +19,15 @@ Type "com.github.mestru17" Sleep 1s Enter
 
 Sleep 2s
 
-Type "kgen-kotlin" Sleep 1s Enter
+Type "hello-world" Sleep 1s Enter
 
 Sleep 2s
 
-Type ".kgen" Sleep 1s Enter
+Type ".hello" Sleep 1s Enter
 
 Sleep 3s
 
-Type "cd kgen-kotlin" Sleep 1s Enter
+Type "cd hello-world" Sleep 1s Enter
 
 Sleep 2s
 
