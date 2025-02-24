@@ -7,4 +7,4 @@ services:
         - MAVEN_REPO_USERNAME=${MAVEN_REPO_USERNAME}
         - MAVEN_REPO_PASSWORD=${MAVEN_REPO_PASSWORD}
     volumes:
-      ./application.yml:/app/application.yml
+      - ./application.yml:/app/application.yml
